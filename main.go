@@ -60,10 +60,8 @@ func get_kmers(read string) {
     length := len(read)
     
     for i := 0; i < length - kmer_size; i++ {
-        fmt.Println(read[i:i+kmer_size])
         kmer_queue <- read[i:i+kmer_size]
     }
-    fmt.Println()
 
     wg.Done()
 }
