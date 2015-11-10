@@ -1,7 +1,7 @@
 package main
 
 import (
-    _ "fmt"
+    "fmt"
     "log"
     "os"
     "bufio"
@@ -9,6 +9,7 @@ import (
     "flag"
     "strconv"
     "runtime/pprof"
+    "github.com/ozcanesen/assembler/fasta"
 )
 
 var kmer_size int
@@ -24,6 +25,19 @@ func main() {
     cpuprofilePtr := flag.String("cpuprofile", "", "write cpu profile to file")
     flag.Parse()
 
+    var fastaReader fasta.FqReader
+    file, err := os.Open(*fastaPtr)
+    fastaReader.Reader = bufio.NewReader(file)
+
+    record, finished := fastaReader.Iter()
+    for {
+        fmt.Println(record.Seq)
+        record, finished = fastaReader.Iter()
+        if (finished) {
+            break
+        }
+    }
+
     if *cpuprofilePtr != "" {
         f, err := os.Create(*cpuprofilePtr)
         if err != nil {
@@ -34,7 +48,7 @@ func main() {
     }
 
     kmer_size = *kmerPtr
-    file, err := os.Open(*fastaPtr)
+    file, err = os.Open(*fastaPtr)
     if err != nil {
         log.Fatal(err)
     }
@@ -111,3 +125,4 @@ func get_kmers(reads []string) {
     kmer_queue <- local_kmer_counts
     wg.Done()
 }
+
