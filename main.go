@@ -3,7 +3,6 @@ package main
 import (
 	"bufio"
 	"flag"
-	"fmt"
 	"log"
 	"os"
 	"runtime/pprof"
@@ -18,9 +17,9 @@ var wg sync.WaitGroup
 
 func main() {
 	kmer_size = *flag.Int("k", 27, "k-mer size")
-	fasta_file := *flag.String("f", "", "fasta file")
-	output_file := *flag.String("o", "kmers.gob", "output file")
-	cpu_profile_file := *flag.String("cpuprofile", "", "write cpu profile to file")
+	fasta_file := flag.String("f", "", "fasta file")
+	output_file := flag.String("o", "kmers.gob", "output file")
+	cpu_profile_file := flag.String("cpuprofile", "", "write cpu profile to file")
 	flag.Parse()
 
 	profile_cpu(cpu_profile_file)
@@ -28,8 +27,8 @@ func main() {
 	write_to_disk(output_file)
 }
 
-func read_sequences(fasta_file string) {
-	file, err := os.Open(fasta_file)
+func read_sequences(fasta_file *string) {
+	file, err := os.Open(*fasta_file)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -65,9 +64,9 @@ func read_sequences(fasta_file string) {
 	}
 }
 
-func profile_cpu(output_file string) {
-	if output_file != "" {
-		f, err := os.Create(output_file)
+func profile_cpu(output_file *string) {
+	if *output_file != "" {
+		f, err := os.Create(*output_file)
 		if err != nil {
 			log.Fatal(err)
 		}
@@ -76,9 +75,9 @@ func profile_cpu(output_file string) {
 	}
 }
 
-func write_to_disk(output_file string) {
-	if output_file != "" {
-		f, err := os.Create(output_file)
+func write_to_disk(output_file *string) {
+	if *output_file != "" {
+		f, err := os.Create(*output_file)
 		if err != nil {
 			log.Fatal(err)
 		}
